@@ -79,10 +79,50 @@ public class Scanner {
             case '>':
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;
+            //in this case, after the wile look breaks, does the next iteration go to case '\n'?
+            case '/':
+                if (match('/')) {
+                    while (peak() != '\n' && !isAtEnd()) {
+                        advance()
+                    }
+                } else { 
+                    addToken(SLASH);
+                }
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+            case '\n': 
+                line++;
+                break;
+            case '"':
+            addStringToken();
+                break;
             default:
                 Lox.error(line, "Unexpected charecter");
                 break;
         }
+    }
+
+    private void addStringToken(){
+        while(peak() != '"' && !isAtEnd()){
+            if(peak() == '\n') {
+                line++;
+            }
+            advance();
+        }
+
+        if(isAtEnd()){
+            Lox.error(line, "Unterminated string");
+            return;
+        }
+
+        //the closing
+        advance();
+
+        String value = source.substring(start + 1, current-1);
+        addToken(STRING, value);
     }
 
     private boolean match(char expected) {
@@ -96,6 +136,14 @@ public class Scanner {
 
         current++;
         return true;
+    }
+
+    private char peak() {
+        if (isAtEnd()) {
+            return '\0';
+        } else {
+            return source.charAt(current);
+        }
     }
 
     private char advance() {
