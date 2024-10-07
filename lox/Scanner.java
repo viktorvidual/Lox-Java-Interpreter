@@ -49,7 +49,7 @@ public class Scanner {
             scanToken();
         }
 
-        tokens.add(new Token(EOF, "", null, line ))
+        tokens.add(new Token(EOF, "", null, line));
         return tokens;
     }
 
@@ -95,19 +95,21 @@ public class Scanner {
                 break;
             case '=':
                 addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+                break;
             case '<':
                 addToken(match('=') ? LESS_EQUAL : LESS);
                 break;
             case '>':
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;
-            //in this case, after the wile look breaks, does the next iteration go to case '\n'?
+            // in this case, after the wile look breaks, does the next iteration go to case
+            // '\n'?
             case '/':
                 if (match('/')) {
                     while (peak() != '\n' && !isAtEnd()) {
-                        advance()
+                        advance();
                     }
-                } else { 
+                } else {
                     addToken(SLASH);
                 }
                 break;
@@ -115,75 +117,75 @@ public class Scanner {
             case '\r':
             case '\t':
                 break;
-            case '\n': 
+            case '\n':
                 line++;
                 break;
             case '"':
-            addStringToken();
+                addStringToken();
                 break;
             default:
-            if(isDigit(c)){
-                addNumberToken();
-            } 
-            else if (isAlpha(c)){
-                addIdentifier();
-            }
-            else {
-                Lox.error(line, "Unexpected charecter");
-                break;
+                if (isDigit(c)) {
+                    addNumberToken();
+                } else if (isAlpha(c)) {
+                    addIdentifier();
+                } else {
+                    Lox.error(line, "Unexpected character");
+                    break;
+                }
         }
     }
 
-    private void addIdentifier(){
-        while(isAlphaNumeric(peak())){
+    private void addIdentifier() {
+        while (isAlphaNumeric(peak())) {
             advance();
         }
 
         String text = source.substring(start, current);
         TokenType type = keywords.get(text);
 
-        if(type == null){
+        if (type == null) {
             type = IDENTIFIER;
         }
-        
-       addToken(IDENTIFIER);
+
+        addToken(IDENTIFIER);
     }
 
-    private void addStringToken(){
-        while(peak() != '"' && !isAtEnd()){
-            if(peak() == '\n') {
+    private void addStringToken() {
+        while (peak() != '"' && !isAtEnd()) {
+            if (peak() == '\n') {
                 line++;
             }
             advance();
         }
 
-        if(isAtEnd()){
+        if (isAtEnd()) {
             Lox.error(line, "Unterminated string");
             return;
         }
 
-        //the closing
+        // the closing
         advance();
 
-        //how exactly does this work?
-        String value = source.substring(start + 1, current-1);
+        // how exactly does this work?
+        String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
     }
 
-    private void addNumberToken(){ 
-        while(isDigit(peak())){
+    private void addNumberToken() {
+        while (isDigit(peak())) {
             advance();
         }
 
-        if (peak() == '.' && isDigit(peakNext())){
+        if (peak() == '.' && isDigit(peakNext())) {
             advance();
 
-            while(isDigit(peak())){
+            while (isDigit(peak())) {
                 advance();
-            };
+            }
+            ;
         }
 
-        //What Double.parseDouble does to convert the string to a double?
+        // What Double.parseDouble does to convert the string to a double?
         addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
     }
 
@@ -208,24 +210,24 @@ public class Scanner {
         }
     }
 
-    private char peakNext(){ 
-        if(current +1 >= source.length()){
+    private char peakNext() {
+        if (current + 1 >= source.length()) {
             return '\0';
         } else {
             return source.charAt(current + 1);
         }
     }
 
-    private boolean isAlpha(char c){
+    private boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
 
-    private boolean isAlphaNumeric(char c){
+    private boolean isAlphaNumeric(char c) {
         return isAlpha(c) || isDigit(c);
     }
 
-    private boolean isDigit(char c){ 
-        return c >=  '0' && c <= '9';
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     private char advance() {
@@ -238,6 +240,6 @@ public class Scanner {
 
     private void addToken(TokenType type, Object literal) {
         String text = source.substring(start, current);
-        tokens.add(new Token(type, text, literal, line))
+        tokens.add(new Token(type, text, literal, line));
     }
 }
