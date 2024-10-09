@@ -12,7 +12,6 @@ public class Lox {
     static boolean hadError = false;
     static boolean hadRuntimeError = false;
 
-
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
             // the function works with only one argument. If there are more than one
@@ -65,10 +64,14 @@ public class Lox {
         // Create a list of tokens using the scanner
         List<Token> tokens = scanner.scanTokens();
 
-        // print out all tokens
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+
+        // Stop if there was a syntax error.
+        if (hadError)
+            return;
+
+        System.out.println(new AstPrinter().print(expression));
     }
 
     static void error(int line, String message) {
