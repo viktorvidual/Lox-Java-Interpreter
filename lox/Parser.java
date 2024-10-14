@@ -57,7 +57,7 @@ public class Parser {
         while(match(MINUS, PLUS)){
             Token operator = previous();
             Expr right = factor();
-            expr = new Expr.Binary(expr, operator, right)
+            expr = new Expr.Binary(expr, operator, right);
         }
 
         return expr;
