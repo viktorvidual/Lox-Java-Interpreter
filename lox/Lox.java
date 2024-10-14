@@ -59,7 +59,7 @@ public class Lox {
     }
 
     static void run(String source) {
-        // create instance of Scanner (which is a class still not implemented)
+        // create instance of Scanner (which is a class stillf not implemented)
         Scanner scanner = new Scanner(source);
         // Create a list of tokens using the scanner
         List<Token> tokens = scanner.scanTokens();
@@ -80,5 +80,13 @@ public class Lox {
 
     private static void report(int line, String where, String message) {
         System.err.println("[line] " + line + "] Error" + where + ": " + message);
+    }
+
+    static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
     }
 }
