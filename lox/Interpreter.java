@@ -1,6 +1,6 @@
 package lox;
 
-class Interpreter implements Expr.Visitor<Object> {
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Object visitLiteralExpr(Expr.Literal expr) {
         return expr.value;
@@ -56,7 +56,7 @@ class Interpreter implements Expr.Visitor<Object> {
         return object.toString();
     }
 
-    @Override
+    @Overridetsts
     public Object visitGroupingExpr(Expr.Grouping expr) {
         return evaluate(expr.expression);
     }
